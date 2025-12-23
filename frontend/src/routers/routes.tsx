@@ -7,7 +7,7 @@ const routes = createBrowserRouter([
     path: "/",
     element: <Home />,
   },
-  { path: "/room/:id", element: <ChatRoom />},
+  { path: "/room/:id", element: <ChatRoom /> },
 ]);
 
 export default routes;
