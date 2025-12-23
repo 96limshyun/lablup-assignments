@@ -29,7 +29,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@pages/*": ["./src/pages/*"],
-      "@routers/*": ["./src/routers/*"]
+      "@routers/*": ["./src/routers/*"],
+      "@components/*": ["./src/components/*"]
     }
   },
   "include": ["src"]
