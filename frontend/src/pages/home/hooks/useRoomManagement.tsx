@@ -14,8 +14,8 @@ const useRoomManagement = () => {
     fetchRooms();
   }, []);
 
-  const handleCreateRoom = async (userId: string) => {
-    const room = await apiFetch("/rooms", "POST", { name: userId });
+  const handleCreateRoom = async () => {
+    const room = await apiFetch("/rooms", "POST");
     navigate(`/room/${room.id}`);
   };
 

@@ -9,7 +9,7 @@ const Home = () => {
       <Text fontSize="4xl" bold={true}>
         Chat Room
       </Text>
-      <Button size="md" onClick={() => handleCreateRoom("test123")}>
+      <Button size="md" onClick={handleCreateRoom}>
         Create Room
       </Button>
 
