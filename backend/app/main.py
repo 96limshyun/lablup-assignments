@@ -4,6 +4,7 @@ import uvicorn
 
 from app.config import settings
 from app.db import init_db
+from app.routers import room
 
 
 @asynccontextmanager
@@ -21,6 +22,8 @@ app = FastAPI(
     debug=settings.DEBUG,
     lifespan=lifespan
 )
+
+app.include_router(room.router)
 
 
 @app.get("/")
