@@ -1,12 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import apiFetch from "@/services/fetch"
-
-type Room = {
-  id: string
-  name: string
-  created_at: string
-}
+import { type Room } from "@/types"
 
 const useRoomManagement = () => {
   const navigate = useNavigate()
