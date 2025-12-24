@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.db import init_db
 from app.routers import room, chat_message, websocket
+from app.cache import init_redis, close_redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,7 +14,18 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"데이터베이스 초기화 실패: {e}")
     
+    try:
+        await init_redis()
+    except Exception as e:
+        print(f"Redis 초기화 실패: {e}")
+        raise
+    
     yield
+    
+    try:
+        await close_redis()
+    except Exception as e:
+        print(f"Redis 종료 실패: {e}")
 
 app = FastAPI(
     title=settings.APP_NAME,
