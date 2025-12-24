@@ -4,4 +4,12 @@ interface Room {
   created_at: string;
 }
 
-export type { Room };
+interface Message {
+  id: string;
+  room_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+}
+
+export type { Room, Message };
