@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import apiFetch from "@/services/fetch";
+import { clearUserId } from "@/utils/generateUserId";
 
 interface useSocketManagementProps<T> {
   endpoint: string;
@@ -15,11 +16,18 @@ const useSocketManagement = <T,>({
   onMessage,
 }: useSocketManagementProps<T>) => {
   const socketRef = useRef<WebSocket | null>(null);
+  const onMessageRef = useRef(onMessage);
+  const setDataRef = useRef(setData);
+
+  useEffect(() => {
+    onMessageRef.current = onMessage;
+    setDataRef.current = setData;
+  });
 
   useEffect(() => {
     const loadData = async () => {
       const data = await apiFetch(endpoint, "GET");
-      setData(data);
+      setDataRef.current(data);
     };
     loadData();
 
@@ -27,14 +35,15 @@ const useSocketManagement = <T,>({
     socketRef.current = socket;
 
     socket.onmessage = (event) => {
-      onMessage(event);
+      onMessageRef.current(event);
     };
 
     return () => {
       socket.close();
       socketRef.current = null;
+      clearUserId();
     };
-  }, [endpoint, setData, wsEndpoint, onMessage]);
+  }, [endpoint, wsEndpoint]);
 
   return null;
 };
