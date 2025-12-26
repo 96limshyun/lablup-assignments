@@ -1,8 +1,42 @@
 import { MainContainer, Text, MessagePanel } from "@components/index";
-import useChatManagement from "./hooks/useChatManagement";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { type Message } from "@/types";
+import useSocketManagement from "@/hooks/useSocketManagerment";
+import apiFetch from "@/services/fetch";
 
 const ChatRoom = () => {
-  const { messages, sendMessage, message, setMessage } = useChatManagement();
+  const { id } = useParams();
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useSocketManagement<Message[]>({
+    endpoint: `/chat_messages/${id}`,
+    setData: setMessages,
+    wsEndpoint: `ws://localhost:8000/ws/rooms/${id}`,
+    onMessage: (event) => {
+      handleOnMessage(event);
+    },
+  });
+
+  const handleOnMessage = (event: MessageEvent) => {
+    const parsedData = JSON.parse(event.data);
+    if (parsedData.type === "new_message") {
+      setMessages((prev) => [...prev, parsedData.data]);
+    }
+  };
+
+  const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!message.trim() || !id) return;
+
+    await apiFetch("/chat_messages/", "POST", {
+      room_id: id,
+      user_id: id,
+      content: message,
+    });
+    setMessage("");
+  };
 
   return (
     <MainContainer>
