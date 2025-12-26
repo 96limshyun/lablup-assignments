@@ -19,8 +19,20 @@ async def set_cached_messages(room_id: str, messages: List[Dict[str, Any]]):
     try:
         redis = await get_redis()
         key = f"messages:{room_id}"
-        await redis.lpush(key, *[json.dumps(msg) for msg in messages])
-        await redis.ltrim(key, 0, settings.MAX_CACHED_MESSAGES - 1)
+        await redis.delete(key)
+        if messages:
+            await redis.rpush(key, *[json.dumps(msg) for msg in messages])
+        await redis.ltrim(key, -settings.MAX_CACHED_MESSAGES, -1)
         await redis.expire(key, settings.CACHE_EXPIRE_SECONDS)
     except Exception as e:
         print(f"Redis 저장 오류: {e}")
+
+async def add_cached_message(room_id: str, message: Dict[str, Any]):
+    try:
+        redis = await get_redis()
+        key = f"messages:{room_id}"
+        await redis.rpush(key, json.dumps(message))
+        await redis.ltrim(key, -settings.MAX_CACHED_MESSAGES, -1)
+        await redis.expire(key, settings.CACHE_EXPIRE_SECONDS)
+    except Exception as e:
+        print(f"Redis 메시지 추가 오류: {e}")

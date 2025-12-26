@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
-from app.cache import get_cached_messages, set_cached_messages
+from app.cache import get_cached_messages, set_cached_messages, add_cached_message
 
 from app.db import get_db
 from app.db.models import Message
@@ -50,9 +50,8 @@ async def create_message(message_data: MessageCreate, db: AsyncSession = Depends
     await db.commit()
     await db.refresh(message)
     
-    await set_cached_messages(message_data.room_id, [message.to_dict()])
-    
     message_dict = message.to_dict()
+    await add_cached_message(message_data.room_id, message_dict)
     await manager.broadcast_to_room(message_data.room_id, {
         "type": "new_message",
         "data": message_dict
