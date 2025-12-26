@@ -25,7 +25,7 @@ const Home = () => {
   };
 
   const handleCreateRoom = async () => {
-    const room = await apiFetch("/rooms", "POST");
+    const room = await apiFetch("/rooms", "POST", { user_id: userId });
     navigate(`/room/${room.id}`, { state: { userId } });
   };
 

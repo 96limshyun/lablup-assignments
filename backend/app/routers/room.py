@@ -2,12 +2,16 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from uuid import uuid4
+from pydantic import BaseModel
 
 from app.db import get_db
 from app.db.models import ChatRoom
 from app.websocket_manager import manager
-
 router = APIRouter(prefix="/rooms", tags=["rooms"])
+
+
+class RoomCreate(BaseModel):
+    user_id: str
 
 
 @router.get("/")
@@ -26,8 +30,8 @@ async def get_rooms(db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/", status_code=201)
-async def create_room(db: AsyncSession = Depends(get_db)):
-    room = ChatRoom(name=str(uuid4()))
+async def create_room(room_data: RoomCreate, db: AsyncSession = Depends(get_db)):
+    room = ChatRoom(name=room_data.user_id)
     db.add(room)
     await db.commit()
     await db.refresh(room)
