@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class ChatRoom(Base):
@@ -24,7 +24,7 @@ class ChatRoom(Base):
     created_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(timezone.utc),
         server_default=text("CURRENT_TIMESTAMP"),
         comment="생성 시간"
     )
@@ -68,7 +68,7 @@ class Message(Base):
     created_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(timezone.utc),
         server_default=text("CURRENT_TIMESTAMP"),
         comment="생성 시간"
     )
