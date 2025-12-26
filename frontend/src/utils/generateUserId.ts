@@ -1,4 +1,3 @@
-
 export const generateUserId = (): string => {
   const existingId = sessionStorage.getItem("user_id");
   if (existingId) {
@@ -15,8 +14,4 @@ export const generateUserId = (): string => {
 
 export const getUserId = (): string => {
   return generateUserId();
-};
-
-export const clearUserId = (): void => {
-  sessionStorage.removeItem("user_id");
 };

@@ -5,7 +5,6 @@ interface RoomListViewProps {
   handleJoinRoom: (roomId: string) => void;
 }
 const RoomListView = ({ rooms, handleJoinRoom }: RoomListViewProps) => {
-  console.log(rooms);
   return (
     <div className="w-full flex flex-col gap-3 mt-4 max-h-[60vh] overflow-y-auto">
       {rooms.length === 0 ? (

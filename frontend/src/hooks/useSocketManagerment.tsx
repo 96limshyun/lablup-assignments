@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react";
 import apiFetch from "@/services/fetch";
-import { clearUserId } from "@/utils/generateUserId";
 
 interface useSocketManagementProps<T> {
   endpoint: string;
@@ -41,7 +40,6 @@ const useSocketManagement = <T,>({
     return () => {
       socket.close();
       socketRef.current = null;
-      clearUserId();
     };
   }, [endpoint, wsEndpoint]);
 
