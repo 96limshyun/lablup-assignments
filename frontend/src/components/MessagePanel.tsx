@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useRef, useEffect } from "react";
 import { Button } from "./index";
 import { type Message } from "@/types";
 
@@ -25,8 +25,19 @@ const MessagePanelList = ({
   emptyMessage = "메시지가 없습니다",
   userId,
 }: MessagePanelListProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
-    <div className="h-96 overflow-y-auto border border-gray-200 rounded-lg p-4">
+    <div
+      ref={containerRef}
+      className="h-96 overflow-y-auto border border-gray-200 rounded-lg p-4"
+    >
       {messages.length === 0 ? (
         <div className="text-md text-gray-500">{emptyMessage}</div>
       ) : (
