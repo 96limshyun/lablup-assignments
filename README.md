@@ -10,6 +10,9 @@ A real-time chat application that supports real-time message sending and receivi
 - Chat room creation and management
 - Redis-based message caching
 - Real-time updates via WebSocket
+- Random guest user ID generation
+- Auto-scroll to latest messages
+- Message alignment (own messages on right, others on left)
 
 ## 2. Tech Stack
 
@@ -42,9 +45,11 @@ lablup-assignments/
 ├── backend/                    # Backend application
 │   ├── app/
 │   │   ├── cache/              # Redis caching utilities
+│   │   │   ├── __init__.py
 │   │   │   ├── cache_utils.py
 │   │   │   └── redis_client.py
 │   │   ├── db/                 # Database related
+│   │   │   ├── __init__.py
 │   │   │   ├── database.py     # DB connection settings
 │   │   │   └── models.py       # SQLAlchemy models
 │   │   ├── routers/            # API routers
@@ -63,24 +68,29 @@ lablup-assignments/
 │   │   │   ├── Button.tsx
 │   │   │   ├── MainContainer.tsx
 │   │   │   ├── MessagePanel.tsx
-│   │   │   └── RoomListView.tsx
+│   │   │   ├── RoomListView.tsx
+│   │   │   ├── Text.tsx
+│   │   │   └── index.ts        # Component exports
 │   │   ├── pages/              # Page components
 │   │   │   ├── chatRoom/       # Chat room page
-│   │   │   │   ├── hooks/
-│   │   │   │   │   └── useChatManagement.tsx
 │   │   │   │   └── index.tsx
 │   │   │   └── home/           # Home page
-│   │   │       ├── hooks/
-│   │   │       │   └── useRoomManagement.tsx
 │   │   │       └── index.tsx
+│   │   ├── hooks/              # Custom React hooks
+│   │   │   └── useSocketManagerment.tsx
 │   │   ├── routers/            # Routing configuration
 │   │   │   └── routes.tsx
 │   │   ├── services/           # API services
 │   │   │   └── fetch.ts
-│   │   └── types/              # TypeScript type definitions
-│   │       └── index.ts
+│   │   ├── types/              # TypeScript type definitions
+│   │   │   └── index.ts
+│   │   ├── utils/              # Utility functions
+│   │   │   └── generateUserId.ts
+│   │   ├── main.tsx            # Application entry point
+│   │   └── index.css           # Global styles
 │   ├── Dockerfile
-│   └── package.json
+│   ├── package.json
+│   └── vite.config.ts          # Vite configuration
 │
 └── docker-compose.yml          # Docker Compose configuration
 ```
