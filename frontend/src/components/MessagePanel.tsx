@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { Text, Button } from "./index";
+import { Button } from "./index";
 import { type Message } from "@/types";
 
 interface MessagePanelRootProps {
@@ -17,20 +17,22 @@ const MessagePanelRoot = ({ children }: MessagePanelRootProps) => {
 interface MessagePanelListProps {
   messages: Message[];
   emptyMessage?: string;
+  userId: string;
 }
 
 const MessagePanelList = ({
   messages,
   emptyMessage = "메시지가 없습니다",
+  userId,
 }: MessagePanelListProps) => {
   return (
     <div className="h-96 overflow-y-auto border border-gray-200 rounded-lg p-4">
       {messages.length === 0 ? (
-        <Text fontSize="md" bold={false}>
-          {emptyMessage}
-        </Text>
+        <div className="text-md text-gray-500">{emptyMessage}</div>
       ) : (
-        messages.map((msg) => <MessagePanelItem key={msg.id} message={msg} />)
+        messages.map((msg) => (
+          <MessagePanelItem key={msg.id} message={msg} userId={userId} />
+        ))
       )}
     </div>
   );
@@ -38,18 +40,28 @@ const MessagePanelList = ({
 
 interface MessagePanelItemProps {
   message: Message;
+  userId: string;
 }
 
-const MessagePanelItem = ({ message }: MessagePanelItemProps) => {
+const MessagePanelItem = ({ message, userId }: MessagePanelItemProps) => {
+  const isMyMessage = message.user_id === userId;
   return (
-    <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-      <Text fontSize="sm" bold={true}>
-        {message.user_id}
-      </Text>
-      <Text fontSize="md" bold={false}>
-        {message.content}
-      </Text>
-      <div className="text-xs text-gray-400 mt-1">
+    <div
+      className={`mb-3 p-3 rounded-lg border flex flex-col max-w-md ${
+        isMyMessage
+          ? "ml-auto bg-blue-500 text-white border-blue-600"
+          : "mr-auto bg-gray-50 text-gray-900 border-gray-100"
+      }`}
+    >
+      <div className={`text-sm font-bold mb-1`}>
+        {isMyMessage ? "You" : message.user_id}
+      </div>
+      <div className="text-md">{message.content}</div>
+      <div
+        className={`text-xs mt-1 ${
+          isMyMessage ? "text-blue-100" : "text-gray-400"
+        }`}
+      >
         {new Date(message.created_at).toLocaleString()}
       </div>
     </div>

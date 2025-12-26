@@ -1,14 +1,15 @@
 import { MainContainer, Text, Button, RoomListView } from "@components/index";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { type Room } from "@/types";
 import useSocketManagement from "@/hooks/useSocketManagerment";
 import apiFetch from "@/services/fetch";
 import { useNavigate } from "react-router-dom";
+import { getUserId } from "@/utils/generateUserId";
 
 const Home = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState<Room[]>([]);
-
+  const userId = useMemo(() => getUserId(), []);
   useSocketManagement<Room[]>({
     endpoint: "/rooms",
     setData: setRooms,
@@ -25,11 +26,11 @@ const Home = () => {
 
   const handleCreateRoom = async () => {
     const room = await apiFetch("/rooms", "POST");
-    navigate(`/room/${room.id}`);
+    navigate(`/room/${room.id}`, { state: { userId } });
   };
 
   const handleJoinRoom = async (roomId: string) => {
-    navigate(`/room/${roomId}`);
+    navigate(`/room/${roomId}`, { state: { userId } });
   };
 
   return (
