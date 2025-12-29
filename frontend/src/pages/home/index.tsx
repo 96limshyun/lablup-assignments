@@ -33,6 +33,10 @@ const Home = () => {
     navigate(`/room/${roomId}`, { state: { userId } });
   };
 
+  const handleDeleteRoom = async (roomId: string) => {
+    await apiFetch(`/rooms/${roomId}`, "DELETE");
+  };
+
   return (
     <MainContainer>
       <Text fontSize="4xl" bold={true}>
@@ -42,7 +46,7 @@ const Home = () => {
         Create Room
       </Button>
 
-      <RoomListView rooms={rooms} handleJoinRoom={handleJoinRoom} />
+      <RoomListView rooms={rooms} handleJoinRoom={handleJoinRoom} userId={userId} handleDeleteRoom={handleDeleteRoom} />
     </MainContainer>
   );
 };

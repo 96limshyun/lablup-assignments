@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from app.db import get_db
 from app.db.models import ChatRoom
 from app.websocket_manager import manager
+from fastapi import HTTPException
+
 router = APIRouter(prefix="/rooms", tags=["rooms"])
 
 
@@ -38,7 +40,7 @@ async def create_room(room_data: RoomCreate, db: AsyncSession = Depends(get_db))
     
     result = await db.execute(select(ChatRoom))
     all_rooms = result.scalars().all()
-    
+        
     rooms_data = [
         {
             "id": str(r.id),
@@ -47,7 +49,7 @@ async def create_room(room_data: RoomCreate, db: AsyncSession = Depends(get_db))
         }
         for r in all_rooms
     ]
-    
+
     await manager.broadcast({
         "type": "rooms_updated",
         "data": rooms_data
@@ -58,3 +60,30 @@ async def create_room(room_data: RoomCreate, db: AsyncSession = Depends(get_db))
         "name": room.name,
         "created_at": room.created_at.isoformat()
     }
+
+@router.delete("/{room_id}", status_code=204)
+async def delete_room(room_id: str, db: AsyncSession = Depends(get_db)):
+    room = await db.get(ChatRoom, room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    await db.delete(room)
+    await db.commit()
+
+    result = await db.execute(select(ChatRoom))
+    all_rooms = result.scalars().all()
+        
+    rooms_data = [
+        {
+            "id": str(r.id),
+            "name": r.name,
+            "created_at": r.created_at.isoformat()
+        }
+        for r in all_rooms
+    ]
+
+    await manager.broadcast({
+        "type": "rooms_updated",
+        "data": rooms_data
+    })
+    
+    return {"message": "Room deleted successfully"}
